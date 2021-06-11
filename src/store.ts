@@ -32,24 +32,3 @@ export const createReactiveStore = <T>(
   };
   return { useData, updater, updateing };
 };
-
-const userInfoStore = createReactiveStore(async () => {
-  return {
-    name: "chougege",
-    sex: "male",
-  };
-});
-
-watchEffect(() => {
-  console.log(`正在更新：${userInfoStore.updateing.value}`);
-});
-
-const userInfo = userInfoStore.useData().state;
-
-watchEffect(() => {
-  console.log(`name:${userInfo.value?.name},sex:${userInfo.value?.sex}`);
-});
-
-setInterval(() => {
-  userInfoStore.updater();
-}, 2000);
