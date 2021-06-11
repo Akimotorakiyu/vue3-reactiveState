@@ -24,5 +24,5 @@ const userInfoStore = createReactiveStore(async () => {
 const userInfo = userInfoStore.useData().state;
 
 watchEffect(() => {
-  console.log(`name:${userInfo.value.name},sex:${userInfo.value.sex}`);
+  console.log(`name:${userInfo.value?.name},sex:${userInfo.value?.sex}`);
 });

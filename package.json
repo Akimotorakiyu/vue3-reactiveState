@@ -1,4 +1,15 @@
 {
+  "name": "reactive-state",
+  "version": "1.0.0",
+  "main": "index.js",
+  "author": "湫曗 <autumnsilverleaves@gmail.com>",
+  "license": "MIT",
+  "scripts": {
+    "serve": "vite"
+  },
+  "devDependencies": {
+    "vite": "^2.3.7"
+  },
   "dependencies": {
     "vue": "^3.1.1"
   }
