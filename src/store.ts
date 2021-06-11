@@ -1,6 +1,8 @@
 import { computed, ref, watchEffect } from "vue";
-
-export const createReactiveStore = <T>(fn: () => Promise<T>) => {
+import { IReactiveStore } from "./type";
+export const createReactiveStore = <T>(
+  fn: () => Promise<T>
+): IReactiveStore<T> => {
   const state = ref<T>();
   const updateingPromise = ref<Promise<T>>();
   const updateing = computed(() => {
@@ -8,16 +10,18 @@ export const createReactiveStore = <T>(fn: () => Promise<T>) => {
   });
 
   const updateState = async () => {
-    state.value = await fn();
-    return state.value;
+    const value = await fn();
+    state.value = value;
+    return value;
   };
 
   const updater = async () => {
     if (!updateingPromise.value) {
       updateingPromise.value = updateState();
     }
-    await updateingPromise.value;
+    const value = await updateingPromise.value;
     updateingPromise.value = null;
+    return value;
   };
 
   const useData = () => {
