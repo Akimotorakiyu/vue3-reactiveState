@@ -12,7 +12,7 @@ const createReactiveStore = <T>(fn: () => Promise<T>) => {
     return state.value;
   };
 
-  const controller = async () => {
+  const updater = async () => {
     if (!updateingPromise.value) {
       updateingPromise.value = updateState();
     }
@@ -23,10 +23,10 @@ const createReactiveStore = <T>(fn: () => Promise<T>) => {
   const useData = () => {
     return {
       state,
-      promise: controller(),
+      promise: updater(),
     };
   };
-  return { useData, controller, updateing };
+  return { useData, updater, updateing };
 };
 
 const userInfoStore = createReactiveStore(async () => {
@@ -45,3 +45,7 @@ const userInfo = userInfoStore.useData().state;
 watchEffect(() => {
   console.log(`name:${userInfo.value?.name},sex:${userInfo.value?.sex}`);
 });
+
+setInterval(() => {
+  userInfoStore.updater();
+}, 2000);
