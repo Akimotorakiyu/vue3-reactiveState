@@ -1,13 +1,24 @@
-import { computed, ref, watchEffect } from "vue";
+import { computed, ref, watchEffect, Ref } from "vue";
 
 const createReactiveStore = <T>(fn: () => Promise<T>) => {
-  const state = ref<T>();
+  const symbol = {};
+  const weakMap = new WeakMap<Object, Ref<T>>();
+
   const updateingPromise = ref<Promise<T>>();
   const updateing = computed(() => {
     return updateingPromise.value ? true : false;
   });
 
+  const takeState = () => {
+    let state = weakMap.get(symbol);
+    if (!state) {
+      weakMap.set(symbol, (state = ref()));
+    }
+    return state;
+  };
+
   const updateState = async () => {
+    const state = takeState();
     state.value = await fn();
     return state.value;
   };
@@ -21,6 +32,7 @@ const createReactiveStore = <T>(fn: () => Promise<T>) => {
   };
 
   const useData = () => {
+    const state = takeState();
     return {
       state,
       promise: updater(),
