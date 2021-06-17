@@ -3,7 +3,7 @@ import { IReactiveStore } from "./type";
 export const createReactiveStore = <T, Args extends unknown[]>(
   fn: (args: Args) => Promise<T>
 ): IReactiveStore<T, Args> => {
-  const state = ref<T>();
+  const state = ref<T>() as Ref<T>;
   const updateingPromise = ref<Promise<Ref<T>>>();
   const updateing = computed(() => {
     return updateingPromise.value ? true : false;
@@ -20,7 +20,7 @@ export const createReactiveStore = <T, Args extends unknown[]>(
       updateingPromise.value = updateState(args);
     }
     const value = await updateingPromise.value;
-    updateingPromise.value = null;
+    updateingPromise.value = undefined;
     return value;
   };
 

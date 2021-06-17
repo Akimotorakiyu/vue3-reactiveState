@@ -4,7 +4,7 @@ import { IReactiveStore } from "./type";
 export const createReactiveWeakStore = <T, Args extends unknown[]>(
   fn: (args: Args) => Promise<T>
 ): IReactiveStore<T, Args> => {
-  const symbol = {};
+  const symbol = Symbol();
   const weakMap = new WeakMap<Object, Ref<T>>();
 
   const updateingPromise = ref<Promise<Ref<T>>>();
@@ -15,7 +15,7 @@ export const createReactiveWeakStore = <T, Args extends unknown[]>(
   const takeState = () => {
     let state = weakMap.get(symbol);
     if (!state) {
-      weakMap.set(symbol, (state = ref()));
+      weakMap.set(symbol, (state = ref() as Ref<T>));
     }
     return state;
   };
@@ -33,7 +33,7 @@ export const createReactiveWeakStore = <T, Args extends unknown[]>(
       updateingPromise.value = updateState(args);
     }
     const value = await updateingPromise.value;
-    updateingPromise.value = null;
+    updateingPromise.value = undefined;
     return value;
   };
 
