@@ -1,10 +1,10 @@
-import { computed, ref, watchEffect } from "vue";
+import { computed, ref, Ref } from "vue";
 import { IReactiveStore } from "./type";
 export const createReactiveStore = <T, Args extends unknown[]>(
   fn: (args: Args) => Promise<T>
 ): IReactiveStore<T, Args> => {
   const state = ref<T>();
-  const updateingPromise = ref<Promise<T>>();
+  const updateingPromise = ref<Promise<Ref<T>>>();
   const updateing = computed(() => {
     return updateingPromise.value ? true : false;
   });
@@ -12,7 +12,7 @@ export const createReactiveStore = <T, Args extends unknown[]>(
   const updateState = async (args: Args) => {
     const value = await fn(args);
     state.value = value;
-    return value;
+    return state;
   };
 
   const updater = async (args: Args) => {
@@ -30,5 +30,5 @@ export const createReactiveStore = <T, Args extends unknown[]>(
       promise: updater(args),
     };
   };
-  return { useData, updater, updateing };
+  return { state, useData, updater, updateing };
 };

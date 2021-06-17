@@ -7,7 +7,7 @@ export const createReactiveWeakStore = <T, Args extends unknown[]>(
   const symbol = {};
   const weakMap = new WeakMap<Object, Ref<T>>();
 
-  const updateingPromise = ref<Promise<T>>();
+  const updateingPromise = ref<Promise<Ref<T>>>();
   const updateing = computed(() => {
     return updateingPromise.value ? true : false;
   });
@@ -25,7 +25,7 @@ export const createReactiveWeakStore = <T, Args extends unknown[]>(
 
     const value = await fn(args);
     state.value = value;
-    return value;
+    return state;
   };
 
   const updater = async (args: Args) => {
@@ -44,5 +44,12 @@ export const createReactiveWeakStore = <T, Args extends unknown[]>(
       promise: updater(args),
     };
   };
-  return { useData, updater, updateing };
+  return {
+    get state() {
+      return takeState();
+    },
+    useData,
+    updater,
+    updateing,
+  };
 };
