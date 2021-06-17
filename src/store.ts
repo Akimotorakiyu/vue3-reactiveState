@@ -1,4 +1,5 @@
 import { computed, ref, Ref } from "vue";
+import { passThrough } from "./passThrough";
 import { IReactiveStore } from "./type";
 export const createReactiveStore = <T, Args extends unknown[]>(
   fn: (args: Args) => Promise<T>
