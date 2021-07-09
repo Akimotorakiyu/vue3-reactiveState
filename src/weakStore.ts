@@ -1,8 +1,19 @@
-import { computed, ref, watchEffect, Ref } from "vue";
+import { computed, ref, watchEffect, Ref, ComputedRef } from "vue";
 import { IReactiveStore } from "./type";
+import { useMessageQueen } from "./message";
 
-export const createReactiveWeakStore = <T, Args extends unknown[]>(
-  fn: (...args: Args) => Promise<T>
+export const createReactiveWeakStore = <T, Args extends unknown[], E = string>(
+  fn: (...args: Args) => Promise<T>,
+  watch?: {
+    messageQueen: ReturnType<typeof useMessageQueen>;
+    handler: (
+      state: Ref<T>,
+      updater: (...args: Args) => Promise<Ref<T>>,
+      updateing: ComputedRef<boolean>,
+      event: E,
+      ...args: Args
+    ) => void;
+  }
 ): IReactiveStore<T, Args> => {
   const symbol = {};
   const weakMap = new WeakMap<Object, Ref<T>>();
@@ -44,6 +55,13 @@ export const createReactiveWeakStore = <T, Args extends unknown[]>(
       promise: updater(...args),
     };
   };
+
+  if (watch) {
+    watch.messageQueen.on((event: E, ...args: Args) => {
+      watch.handler(takeState(), updater, updateing, event, ...args);
+    });
+  }
+
   return {
     get state() {
       return takeState();

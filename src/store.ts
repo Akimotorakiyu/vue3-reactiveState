@@ -1,8 +1,20 @@
-import { computed, ref, Ref } from "vue";
+import { computed, ref, Ref, ComputedRef } from "vue";
 import { passThrough } from "./passThrough";
 import { IReactiveStore } from "./type";
-export const createReactiveStore = <T, Args extends unknown[]>(
-  fn: (...args: Args) => Promise<T>
+
+import { useMessageQueen } from "./message";
+export const createReactiveStore = <T, Args extends unknown[], E = string>(
+  fn: (...args: Args) => Promise<T>,
+  watch?: {
+    messageQueen: ReturnType<typeof useMessageQueen>;
+    handler: (
+      state: Ref<T>,
+      updater: (...args: Args) => Promise<Ref<T>>,
+      updateing: ComputedRef<boolean>,
+      event: E,
+      ...args: Args
+    ) => void;
+  }
 ): IReactiveStore<T, Args> => {
   const state = ref<T>() as Ref<T>;
   const updateingPromise = ref<Promise<Ref<T>>>();
@@ -31,5 +43,11 @@ export const createReactiveStore = <T, Args extends unknown[]>(
       promise: updater(...args),
     };
   };
+
+  if (watch) {
+    watch.messageQueen.on((event: E, ...args: Args) => {
+      watch.handler(state, updater, updateing, event, ...args);
+    });
+  }
   return { state, useData, updater, updateing };
 };
