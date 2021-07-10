@@ -49,5 +49,8 @@ export const createReactiveStore = <T, Args extends unknown[], E = string>(
       watch.handler(state, updater, updateing, event, ...args);
     });
   }
-  return { state, useData, updater, updateing };
+
+  const postal = passThrough<IReactiveStore<T, Args>>();
+
+  return { state, useData, updater, updateing, postal };
 };

@@ -3,6 +3,9 @@ import { passThrough } from "./passThrough";
 import { createReactiveStore } from "./store";
 import { createReactiveWeakStore } from "./weakStore";
 import { useMessageQueen } from "./message";
+
+import { IReactiveStore } from "./type";
+
 export const factory = <T, Args extends any[], E = any>(
   fn: (...args: Args) => Promise<T>,
   watch?: {
@@ -16,14 +19,20 @@ export const factory = <T, Args extends any[], E = any>(
     ) => void;
   }
 ) => {
-  const postal = passThrough<T>();
+  const postal = passThrough<IReactiveStore<T, Args>>();
 
   const storehouse = () => {
-    return createReactiveStore(fn, watch);
+    const house = createReactiveStore(fn, watch);
+    house.postal = postal;
+
+    return house;
   };
 
   const warehouse = () => {
-    return createReactiveWeakStore(fn, watch);
+    const house = createReactiveWeakStore(fn, watch);
+    house.postal = postal;
+
+    return house;
   };
 
   return {

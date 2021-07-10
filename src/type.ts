@@ -1,5 +1,5 @@
 import { Ref } from "vue";
-
+import { Portal } from "./passThrough";
 export interface IReactiveStore<T, Args extends unknown[]> {
   useData: (...args: Args) => {
     state: Ref<T>;
@@ -8,4 +8,5 @@ export interface IReactiveStore<T, Args extends unknown[]> {
   updater: (...args: Args) => Promise<Ref<T>>;
   updateing: Ref<boolean>;
   state: Ref<T>;
+  postal: Portal<IReactiveStore<T, Args>>;
 }

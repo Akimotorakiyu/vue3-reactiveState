@@ -1,6 +1,7 @@
 import { computed, ref, watchEffect, Ref, ComputedRef } from "vue";
 import { IReactiveStore } from "./type";
 import { useMessageQueen } from "./message";
+import { passThrough } from "./passThrough";
 
 export const createReactiveWeakStore = <T, Args extends unknown[], E = string>(
   fn: (...args: Args) => Promise<T>,
@@ -62,6 +63,8 @@ export const createReactiveWeakStore = <T, Args extends unknown[], E = string>(
     });
   }
 
+  const postal = passThrough<IReactiveStore<T, Args>>();
+
   return {
     get state() {
       return takeState();
@@ -69,5 +72,6 @@ export const createReactiveWeakStore = <T, Args extends unknown[], E = string>(
     useData,
     updater,
     updateing,
+    postal,
   };
 };
