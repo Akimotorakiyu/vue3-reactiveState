@@ -3,10 +3,11 @@ import { createMessageQueue } from "./message";
 import { createFactory } from "./factory";
 
 export { createFactory, createMessageQueue };
-const factory = createFactory(async () => {
+const factory = createFactory(async (id: string) => {
   return {
-    name: "chougege",
-    sex: "male",
+    id,
+    name: id + "chougege",
+    sex: Math.random() > 0.5 ? "female" : "male",
   };
 });
 
@@ -17,14 +18,14 @@ const factory = createFactory(async () => {
     console.log(`正在更新：${userInfoStore.updateing.value}`);
   });
 
-  const userInfo = userInfoStore.useData().state;
+  const userInfo = userInfoStore.useData("ddd").state;
 
   watchEffect(() => {
     console.log(`name:${userInfo.value?.name},sex:${userInfo.value?.sex}`);
   });
 
   setInterval(() => {
-    userInfoStore.updater();
+    userInfoStore.updater("ddd");
   }, 2000);
 }
 
@@ -35,13 +36,13 @@ const factory = createFactory(async () => {
     console.log(`正在更新：${userInfoStore.updateing.value}`);
   });
 
-  const userInfo = userInfoStore.useData().state;
+  const userInfo = userInfoStore.useData("fff").state;
 
   watchEffect(() => {
     console.log(`name:${userInfo.value?.name},sex:${userInfo.value?.sex}`);
   });
 
   setInterval(() => {
-    userInfoStore.updater();
+    userInfoStore.updater("fff");
   }, 2000);
 }
