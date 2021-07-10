@@ -2,14 +2,14 @@ import { Ref, ComputedRef } from "vue";
 import { createPortal } from "./Portal";
 import { createReactiveStore } from "./store";
 import { createReactiveWeakStore } from "./weakStore";
-import { useMessageQueen } from "./message";
+import { createMessageQueue } from "./message";
 
 import { IReactiveStore } from "./type";
 
 export const factory = <T, Args extends any[], E = any>(
   fn: (...args: Args) => Promise<T>,
   watch?: {
-    messageQueen: ReturnType<typeof useMessageQueen>;
+    messageQueen: ReturnType<typeof createMessageQueue>;
     handler: (
       state: Ref<T>,
       updater: (...args: Args) => Promise<Ref<T>>,

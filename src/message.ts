@@ -1,26 +1,35 @@
-export type Listenner<Args extends unknown[]> = (...args: Args) => void;
+export type Listenner<Args extends unknown[]> = (
+  ...args: Args
+) => void | Promise<void>;
 
-export const useMessageQueen = () => {
+export interface MessageQueue {
+  removeAction: <Args extends unknown[]>(listenner: Listenner<Args>) => void;
+  addAction: <Args extends unknown[]>(listenner: Listenner<Args>) => () => void;
+  dispatch: <Args extends unknown[]>(...args: Args) => (void | Promise<void>)[];
+}
+
+export const createMessageQueue = (): MessageQueue => {
   const listennerSet = new Set<Listenner<unknown[]>>();
 
-  const remove = <Args extends unknown[]>(listenner: Listenner<Args>) => {
+  const removeAction = <Args extends unknown[]>(listenner: Listenner<Args>) => {
     listennerSet.delete(listenner as any);
   };
 
-  const on = <Args extends unknown[]>(listenner: Listenner<Args>) => {
+  const addAction = <Args extends unknown[]>(listenner: Listenner<Args>) => {
     listennerSet.add(listenner as any);
 
     return () => {
-      remove(listenner);
+      removeAction(listenner);
     };
   };
-  const emit = <Args extends unknown[]>(...args: Args) => {
-    listennerSet.forEach((listenner) => listenner(...args));
+
+  const dispatch = <Args extends unknown[]>(...args: Args) => {
+    return [...listennerSet].map((listenner) => listenner(...args));
   };
 
   return {
-    on,
-    emit,
-    remove,
+    addAction,
+    dispatch,
+    removeAction,
   };
 };
