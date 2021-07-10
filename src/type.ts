@@ -1,5 +1,5 @@
 import { Ref } from "vue";
-import { Portal } from "./passThrough";
+import { Portal } from "./Portal";
 export interface IReactiveStore<T, Args extends unknown[]> {
   useData: (...args: Args) => {
     state: Ref<T>;

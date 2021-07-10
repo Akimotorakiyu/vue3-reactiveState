@@ -1,7 +1,7 @@
 import { computed, ref, watchEffect, Ref, ComputedRef } from "vue";
 import { IReactiveStore } from "./type";
 import { useMessageQueen } from "./message";
-import { passThrough } from "./passThrough";
+import { createPortal } from "./Portal";
 
 export const createReactiveWeakStore = <T, Args extends unknown[], E = string>(
   fn: (...args: Args) => Promise<T>,
@@ -63,7 +63,7 @@ export const createReactiveWeakStore = <T, Args extends unknown[], E = string>(
     });
   }
 
-  const postal = passThrough<IReactiveStore<T, Args>>();
+  const postal = createPortal<IReactiveStore<T, Args>>();
 
   return {
     get state() {

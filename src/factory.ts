@@ -1,5 +1,5 @@
 import { Ref, ComputedRef } from "vue";
-import { passThrough } from "./passThrough";
+import { createPortal } from "./Portal";
 import { createReactiveStore } from "./store";
 import { createReactiveWeakStore } from "./weakStore";
 import { useMessageQueen } from "./message";
@@ -19,7 +19,7 @@ export const factory = <T, Args extends any[], E = any>(
     ) => void;
   }
 ) => {
-  const postal = passThrough<IReactiveStore<T, Args>>();
+  const postal = createPortal<IReactiveStore<T, Args>>();
 
   const storehouse = () => {
     const house = createReactiveStore(fn, watch);

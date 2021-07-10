@@ -1,5 +1,5 @@
 import { computed, ref, Ref, ComputedRef } from "vue";
-import { passThrough } from "./passThrough";
+import { createPortal } from "./Portal";
 import { IReactiveStore } from "./type";
 
 import { useMessageQueen } from "./message";
@@ -50,7 +50,7 @@ export const createReactiveStore = <T, Args extends unknown[], E = string>(
     });
   }
 
-  const postal = passThrough<IReactiveStore<T, Args>>();
+  const postal = createPortal<IReactiveStore<T, Args>>();
 
   return { state, useData, updater, updateing, postal };
 };

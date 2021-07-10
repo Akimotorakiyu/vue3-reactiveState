@@ -9,7 +9,7 @@ export interface Portal<T> {
  * 一般是用这个
  * @returns
  */
-export const passThrough = <T>(): Portal<T> => {
+export const createPortal = <T>(): Portal<T> => {
   const symbolKey = Symbol();
 
   const provider = (state: T) => {
