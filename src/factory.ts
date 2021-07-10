@@ -6,7 +6,7 @@ import { createMessageQueue } from "./message";
 
 import { IReactiveStore } from "./type";
 
-export const factory = <T, Args extends any[], E = any>(
+export const createFactory = <T, Args extends any[], E = any>(
   fn: (...args: Args) => Promise<T>,
   watch?: {
     messageQueen: ReturnType<typeof createMessageQueue>;
