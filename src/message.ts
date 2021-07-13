@@ -2,13 +2,13 @@ export type Listenner<Args extends unknown[]> = (
   ...args: Args
 ) => void | Promise<void>;
 
-export interface MessageQueue {
+export interface MessageCenter {
   removeAction: <Args extends unknown[]>(listenner: Listenner<Args>) => void;
   addAction: <Args extends unknown[]>(listenner: Listenner<Args>) => () => void;
   dispatch: <Args extends unknown[]>(...args: Args) => (void | Promise<void>)[];
 }
 
-export const createMessageQueue = (): MessageQueue => {
+export const createMessageCenter = (): MessageCenter => {
   const listennerSet = new Set<Listenner<unknown[]>>();
 
   const removeAction = <Args extends unknown[]>(listenner: Listenner<Args>) => {

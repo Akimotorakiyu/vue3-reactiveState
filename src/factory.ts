@@ -1,16 +1,18 @@
 import { Ref, ComputedRef } from "vue";
 import { createReactiveStore } from "./store";
-import { createMessageQueue } from "./message";
+import { createMessageCenter } from "./message";
 
-export const createFactory = () => {
-  const messageQueen = createMessageQueue();
+export const createStoreFactory = () => {
+  const messageCenter = createMessageCenter();
 
-  const storehouse = <T, Args extends any[], E = any>(
+  const storeFactory = <T, Args extends any[], E = any>(
     fn: (...args: Args) => Promise<T>,
     handler?: (
-      state: Ref<T>,
-      updater: (...args: Args) => Promise<Ref<T>>,
-      updateing: ComputedRef<boolean>,
+      ctx: {
+        state: Ref<T>;
+        updater: (...args: Args) => Promise<Ref<T>>;
+        updateing: ComputedRef<boolean>;
+      },
       event: E,
       ...args: Args
     ) => void
@@ -19,7 +21,7 @@ export const createFactory = () => {
       fn,
       handler
         ? {
-            messageQueen,
+            messageCenter,
             handler,
           }
         : undefined
@@ -29,6 +31,7 @@ export const createFactory = () => {
   };
 
   return {
-    storehouse,
+    storeFactory,
+    messageCenter,
   };
 };

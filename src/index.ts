@@ -1,12 +1,12 @@
 import { watchEffect } from "vue";
-import { createMessageQueue } from "./message";
-import { createFactory } from "./factory";
+import { createMessageCenter } from "./message";
+import { createStoreFactory } from "./factory";
 
-export { createFactory, createMessageQueue };
-const factory = createFactory();
+export { createStoreFactory, createMessageCenter };
+const { storeFactory, messageCenter } = createStoreFactory();
 
 {
-  const userInfoStore = factory.storehouse(
+  const userInfoStore = storeFactory(
     async (id: string) => {
       return {
         id,
@@ -14,7 +14,11 @@ const factory = createFactory();
         sex: Math.random() > 0.5 ? "female" : "male",
       };
     },
-    (state, updater, updateing, event, ...args) => {}
+    (ctx, event, ...args) => {
+      if (event === "hello") {
+        ctx.updater(args[0]);
+      }
+    }
   );
 
   watchEffect(() => {
@@ -28,6 +32,7 @@ const factory = createFactory();
   });
 
   setInterval(() => {
-    userInfoStore.updater("ddd");
+    // userInfoStore.updater("ddd");
+    messageCenter.dispatch("hello", "id" + Math.random().toFixed(2));
   }, 2000);
 }

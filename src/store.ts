@@ -2,15 +2,17 @@ import { computed, ref, Ref, ComputedRef } from "vue";
 import { createPortal } from "./Portal";
 import { IReactiveStore } from "./type";
 
-import { createMessageQueue, MessageQueue } from "./message";
+import { MessageCenter } from "./message";
 export const createReactiveStore = <T, Args extends unknown[], E = string>(
   fn: (...args: Args) => Promise<T>,
   watch?: {
-    messageQueen: MessageQueue;
+    messageCenter: MessageCenter;
     handler: (
-      state: Ref<T>,
-      updater: (...args: Args) => Promise<Ref<T>>,
-      updateing: ComputedRef<boolean>,
+      ctx: {
+        state: Ref<T>;
+        updater: (...args: Args) => Promise<Ref<T>>;
+        updateing: ComputedRef<boolean>;
+      },
       event: E,
       ...args: Args
     ) => void;
@@ -45,8 +47,8 @@ export const createReactiveStore = <T, Args extends unknown[], E = string>(
   };
 
   if (watch) {
-    watch.messageQueen.addAction((event: E, ...args: Args) => {
-      watch.handler(state, updater, updateing, event, ...args);
+    watch.messageCenter.addAction((event: E, ...args: Args) => {
+      watch.handler({ state, updater, updateing }, event, ...args);
     });
   }
 
