@@ -6,7 +6,7 @@ export { createStoreFactory, createMessageCenter };
 const { storeFactory, messageCenter } = createStoreFactory();
 
 {
-  const userInfoStore = storeFactory(
+  const { storeHouse, portal } = storeFactory(
     async (id: string) => {
       return {
         id,
@@ -20,6 +20,8 @@ const { storeFactory, messageCenter } = createStoreFactory();
       }
     }
   );
+
+  const userInfoStore = storeHouse();
 
   watchEffect(() => {
     console.log(`正在更新：${userInfoStore.updateing.value}`);

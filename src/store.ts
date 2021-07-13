@@ -52,7 +52,5 @@ export const createReactiveStore = <T, Args extends unknown[], E = string>(
     });
   }
 
-  const postal = createPortal<IReactiveStore<T, Args>>();
-
-  return { state, useData, updater, updateing, postal };
+  return { state, useData, updater, updateing };
 };
