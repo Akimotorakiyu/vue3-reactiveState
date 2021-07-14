@@ -3,7 +3,14 @@ import { createMessageCenter } from "./message";
 import { createStoreFactory } from "./factory";
 
 export { createStoreFactory, createMessageCenter };
-const { storeFactory, messageCenter } = createStoreFactory();
+type MessageConstraints = {
+  hello: [id: string];
+  world: [id: number];
+  not: [id: number];
+};
+
+const { storeFactory, messageCenter } =
+  createStoreFactory<MessageConstraints>();
 
 {
   const { storeHouse, portal } = storeFactory(
@@ -14,10 +21,13 @@ const { storeFactory, messageCenter } = createStoreFactory();
         sex: Math.random() > 0.5 ? "female" : "male",
       };
     },
-    (ctx, event, ...args) => {
-      if (event === "hello") {
+    {
+      hello: (ctx, event, ...args) => {
         ctx.updater(args[0]);
-      }
+      },
+      world: (ctx, event, ...args) => {
+        ctx.updater(`${args[0]}`);
+      },
     }
   );
 

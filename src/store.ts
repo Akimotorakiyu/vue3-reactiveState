@@ -2,20 +2,26 @@ import { computed, ref, Ref, ComputedRef } from "vue";
 import { createPortal } from "./Portal";
 import { IReactiveStore } from "./type";
 
-import { MessageCenter } from "./message";
-export const createReactiveStore = <T, Args extends unknown[], E = string>(
+import { MessageCenter, MessageProtcol } from "./message";
+export const createReactiveStore = <
+  T,
+  Args extends unknown[],
+  Protcol extends MessageProtcol
+>(
   fn: (...args: Args) => Promise<T>,
   watch?: {
-    messageCenter: MessageCenter;
-    handler: (
-      ctx: {
-        state: Ref<T>;
-        updater: (...args: Args) => Promise<Ref<T>>;
-        updateing: ComputedRef<boolean>;
-      },
-      event: E,
-      ...args: Args
-    ) => void;
+    messageCenter: MessageCenter<Protcol>;
+    handlers: {
+      [E in keyof Protcol]?: (
+        ctx: {
+          state: Ref<T>;
+          updater: (...args: Args) => Promise<Ref<T>>;
+          updateing: ComputedRef<boolean>;
+        },
+        event: E,
+        ...args: Protcol[E]
+      ) => void;
+    };
   }
 ): IReactiveStore<T, Args> => {
   const state = ref<T>() as Ref<T>;
@@ -47,8 +53,8 @@ export const createReactiveStore = <T, Args extends unknown[], E = string>(
   };
 
   if (watch) {
-    watch.messageCenter.addAction((event: E, ...args: Args) => {
-      watch.handler({ state, updater, updateing }, event, ...args);
+    watch.messageCenter.addAction((event, ...args) => {
+      watch.handlers[event]?.({ state, updater, updateing }, event, ...args);
     });
   }
 
