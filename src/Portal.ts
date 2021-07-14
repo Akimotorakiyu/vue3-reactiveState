@@ -3,6 +3,7 @@ import { provide, inject } from "vue";
 export interface Portal<T> {
   provider: (state: T) => void;
   injector: () => T;
+  symbolKey: symbol;
 }
 
 /**
@@ -23,5 +24,6 @@ export const createPortal = <T>(): Portal<T> => {
   return {
     provider,
     injector,
+    symbolKey,
   };
 };

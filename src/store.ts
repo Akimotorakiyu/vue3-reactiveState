@@ -8,12 +8,14 @@ import {
 } from "vue";
 import { IReactiveStore } from "./type";
 import { MessageCenter, MessageProtcol } from "./message";
+import { Portal } from "./Portal";
 export const createReactiveStore = <
   T,
   Args extends unknown[],
   Protcol extends MessageProtcol
 >(
   fn: (...args: Args) => Promise<T>,
+  portal: Portal<IReactiveStore<T, Args>>,
   watch?: {
     messageCenter: MessageCenter<Protcol>;
     handlers: {
@@ -62,5 +64,14 @@ export const createReactiveStore = <
     }
   }
 
-  return { state, updater, updateing };
+  const reactiveStore = {
+    state,
+    updater,
+    updateing,
+    provider() {
+      portal.provider(reactiveStore);
+    },
+  };
+
+  return reactiveStore;
 };
