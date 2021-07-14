@@ -32,12 +32,13 @@ const { storeFactory, messageCenter } =
   );
 
   const userInfoStore = storeHouse();
+  userInfoStore.updater("ddd");
 
   watchEffect(() => {
     console.log(`正在更新：${userInfoStore.updateing.value}`);
   });
 
-  const userInfo = userInfoStore.useData("ddd").state;
+  const userInfo = userInfoStore.state;
 
   watchEffect(() => {
     console.log(`name:${userInfo.value?.name},sex:${userInfo.value?.sex}`);

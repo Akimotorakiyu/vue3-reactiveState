@@ -50,13 +50,6 @@ export const createReactiveStore = <
     return value;
   };
 
-  const useData = (...args: Args) => {
-    return {
-      state,
-      promise: updater(...args),
-    };
-  };
-
   if (watch) {
     const remover = watch.messageCenter.addAction((event, ...args) => {
       watch.handlers[event]?.({ state, updater, updateing }, event, ...args);
@@ -69,5 +62,5 @@ export const createReactiveStore = <
     }
   }
 
-  return { state, useData, updater, updateing };
+  return { state, updater, updateing };
 };
