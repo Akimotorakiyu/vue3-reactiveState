@@ -1,4 +1,11 @@
-import { computed, ref, Ref, ComputedRef } from "vue";
+import {
+  computed,
+  ref,
+  Ref,
+  ComputedRef,
+  getCurrentInstance,
+  onUnmounted,
+} from "vue";
 import { IReactiveStore } from "./type";
 import { MessageCenter, MessageProtcol } from "./message";
 export const createReactiveStore = <
@@ -51,9 +58,15 @@ export const createReactiveStore = <
   };
 
   if (watch) {
-    watch.messageCenter.addAction((event, ...args) => {
+    const remover = watch.messageCenter.addAction((event, ...args) => {
       watch.handlers[event]?.({ state, updater, updateing }, event, ...args);
     });
+
+    if (getCurrentInstance()) {
+      onUnmounted(() => {
+        remover();
+      });
+    }
   }
 
   return { state, useData, updater, updateing };
