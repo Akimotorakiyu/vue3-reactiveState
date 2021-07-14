@@ -25,25 +25,3 @@ export const createPortal = <T>(): Portal<T> => {
     injector,
   };
 };
-
-/**
- *  这个应该是用不到的
- * @param state
- * @returns
- */
-export const passThroughState = <T>(state: T) => {
-  const symbolKey = Symbol();
-
-  const provider = () => {
-    return provide(symbolKey, state);
-  };
-
-  const injector = () => {
-    return inject(symbolKey, state);
-  };
-
-  return {
-    provider,
-    injector,
-  };
-};
