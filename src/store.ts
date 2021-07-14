@@ -6,9 +6,21 @@ import {
   getCurrentInstance,
   onUnmounted,
 } from "vue";
-import { IReactiveStore } from "./type";
 import { MessageCenter, MessageProtcol } from "./message";
 import { Portal } from "./Portal";
+export interface IReactiveStore<
+  T,
+  Args extends unknown[],
+  Protcol extends MessageProtcol
+> {
+  updater: (...args: Args) => Promise<Ref<T>>;
+  updateing: Ref<boolean>;
+  state: Ref<T>;
+  provider(): void;
+  portal: Portal<IReactiveStore<T, Args, Protcol>>;
+  messageCenter: MessageCenter<Protcol>;
+}
+
 export const createReactiveStore = <
   T,
   Args extends unknown[],
