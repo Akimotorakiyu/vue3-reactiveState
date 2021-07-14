@@ -21,18 +21,14 @@ export const createStoreFactory = <Protcol extends MessageProtcol>() => {
       ) => void;
     }
   ) => {
-    const portal = createPortal<IReactiveStore<T, Args>>();
+    const portal = createPortal<IReactiveStore<T, Args, Protcol>>();
 
     const storeHouse = () => {
       const reactiveStore = createReactiveStore(
         fn,
         portal,
+        messageCenter,
         handlers
-          ? {
-              messageCenter,
-              handlers,
-            }
-          : undefined
       );
 
       return reactiveStore;

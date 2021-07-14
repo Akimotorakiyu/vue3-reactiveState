@@ -15,22 +15,20 @@ export const createReactiveStore = <
   Protcol extends MessageProtcol
 >(
   fn: (...args: Args) => Promise<T>,
-  portal: Portal<IReactiveStore<T, Args>>,
-  watch?: {
-    messageCenter: MessageCenter<Protcol>;
-    handlers: {
-      [E in keyof Protcol]?: (
-        ctx: {
-          state: Ref<T>;
-          updater: (...args: Args) => Promise<Ref<T>>;
-          updateing: ComputedRef<boolean>;
-        },
-        event: E,
-        ...args: Protcol[E]
-      ) => void;
-    };
+  portal: Portal<IReactiveStore<T, Args, Protcol>>,
+  messageCenter: MessageCenter<Protcol>,
+  handlers?: {
+    [E in keyof Protcol]?: (
+      ctx: {
+        state: Ref<T>;
+        updater: (...args: Args) => Promise<Ref<T>>;
+        updateing: ComputedRef<boolean>;
+      },
+      event: E,
+      ...args: Protcol[E]
+    ) => void;
   }
-): IReactiveStore<T, Args> => {
+): IReactiveStore<T, Args, Protcol> => {
   const state = ref<T>() as Ref<T>;
   const updateingPromise = ref<Promise<Ref<T>>>();
   const updateing = computed(() => {
@@ -52,9 +50,9 @@ export const createReactiveStore = <
     return value;
   };
 
-  if (watch) {
-    const remover = watch.messageCenter.addAction((event, ...args) => {
-      watch.handlers[event]?.({ state, updater, updateing }, event, ...args);
+  if (handlers) {
+    const remover = messageCenter.addAction((event, ...args) => {
+      handlers[event]?.({ state, updater, updateing }, event, ...args);
     });
 
     if (getCurrentInstance()) {
@@ -71,6 +69,8 @@ export const createReactiveStore = <
     provider() {
       portal.provider(reactiveStore);
     },
+    portal,
+    messageCenter,
   };
 
   return reactiveStore;
