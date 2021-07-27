@@ -1,4 +1,4 @@
-# ReactiveState supporter
+# ReactiveState
 
 ## Features
 
