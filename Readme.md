@@ -2,11 +2,6 @@
 
 ## Features
 
-- 领域驱动 DDD suport - Portal: provide/inject
-- 统一更新 update: 统一更新调用、统一更新请求、统一更新状态
-
-  **✨ 并同时拥有完整的类型推导 ✨**
-
 ## Use Case
 
 ```ts
